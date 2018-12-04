@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { Fragment } from "react";
+import styled from "styled-components";
+import GlobalStyle from "./styles/global";
 
 const App = () => (
-  <div className="App">
-    <h1>Olá amigos!</h1>
-  </div>
+    <Fragment>
+        <GlobalStyle>
+            <div className="App" />
+        </GlobalStyle>
+    </Fragment>
 );
 
 export default App;
