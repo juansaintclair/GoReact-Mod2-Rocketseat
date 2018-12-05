@@ -7,6 +7,7 @@ import moment from "moment";
 
 export default class Main extends Component {
     state = {
+        repositoryError: false,
         repositoryInput: "",
         repositories: []
     };
@@ -25,10 +26,11 @@ export default class Main extends Component {
 
             this.setState({
                 repositoryInput: "",
-                repositories: [...this.state.repositories, repository]
+                repositories: [...this.state.repositories, repository],
+                repositoryError: false
             });
         } catch (err) {
-            console.log(err);
+            this.setState({ repositoryError: true });
         }
     };
 
@@ -37,7 +39,10 @@ export default class Main extends Component {
             <Container>
                 <img src={logo} alt="Git Compare" />
 
-                <Form onSubmit={this.handleAddRepository}>
+                <Form
+                    withError={this.state.repositoryError}
+                    onSubmit={this.handleAddRepository}
+                >
                     <input
                         type="text"
                         placeholder="usuário/repositório"
