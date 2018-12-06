@@ -2,10 +2,14 @@ import React from "react";
 import { Container, Repository } from "./styles";
 import PropTypes from "prop-types";
 
-const CompareList = ({ repositories }) => (
+const CompareList = ({ repositories, onRemove }) => (
     <Container>
         {repositories.map(repository => (
             <Repository key={repository.id}>
+                <i
+                    className="fa fa-close"
+                    onClick={() => onRemove(repository.id)}
+                />
                 <header>
                     <img
                         src={repository.owner.avatar_url}

@@ -5,6 +5,12 @@ import CompareList from "../../components/CompareList";
 import api from "../../services/api";
 import moment from "moment";
 
+const filterRepository = (repositories, repositoryInput) =>
+    repositories.filter(
+        repository =>
+            repository.full_name.toLowerCase() === repositoryInput.toLowerCase()
+    );
+
 export default class Main extends Component {
     state = {
         loading: false,
@@ -13,25 +19,59 @@ export default class Main extends Component {
         repositories: []
     };
 
+    componentDidMount() {
+        if (!localStorage.repositories) {
+            localStorage.repositories = JSON.stringify([]);
+        }
+
+        this.setState({ repositories: JSON.parse(localStorage.repositories) });
+    }
+
+    handleRemoveRepository = id => {
+        const { repositories } = this.state;
+
+        const removedRepository = repositories.filter(
+            repository => repository.id !== id
+        );
+
+        localStorage.repositories = JSON.stringify(removedRepository);
+
+        this.setState({ repositories: removedRepository });
+    };
+
     handleAddRepository = async e => {
         e.preventDefault();
 
         this.setState({ loading: true });
 
+        const { repositoryInput, repositories } = this.state;
+
         try {
-            const { data: repository } = await api.get(
-                `/repos/${this.state.repositoryInput}`
-            );
+            if (filterRepository(repositories, repositoryInput).length) {
+                this.setState({
+                    repositoryError: true,
+                    loading: false
+                });
+            } else {
+                const { data: repository } = await api.get(
+                    `/repos/${this.state.repositoryInput}`
+                );
 
-            repository.lastCommit = moment(repository.pushed_at)
-                .locale("pt-br")
-                .fromNow();
+                localStorage.repositories = JSON.stringify([
+                    ...repositories,
+                    repository
+                ]);
 
-            this.setState({
-                repositoryInput: "",
-                repositories: [...this.state.repositories, repository],
-                repositoryError: false
-            });
+                repository.lastCommit = moment(repository.pushed_at).fromNow();
+
+                this.setState({
+                    repositoryInput: "",
+                    repositories: [...this.state.repositories, repository],
+                    repositoryError: false
+                });
+
+                localStorage.setItem(this.state.repositories);
+            }
         } catch (err) {
             this.setState({ repositoryError: true });
         } finally {
@@ -70,7 +110,10 @@ export default class Main extends Component {
                     </button>
                 </Form>
 
-                <CompareList repositories={this.state.repositories} />
+                <CompareList
+                    repositories={this.state.repositories}
+                    onRemove={this.handleRemoveRepository}
+                />
             </Container>
         );
     }
