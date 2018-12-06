@@ -36,4 +36,9 @@ export const Form = styled.form`
         border-radius: 3px;
         cursor: pointer;
     }
+
+    button[disabled] {
+        cursor: no-drop;
+        background: #f58b63;
+    }
 `;

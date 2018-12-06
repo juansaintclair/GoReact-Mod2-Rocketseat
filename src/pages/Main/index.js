@@ -7,6 +7,7 @@ import moment from "moment";
 
 export default class Main extends Component {
     state = {
+        loading: false,
         repositoryError: false,
         repositoryInput: "",
         repositories: []
@@ -14,6 +15,8 @@ export default class Main extends Component {
 
     handleAddRepository = async e => {
         e.preventDefault();
+
+        this.setState({ loading: true });
 
         try {
             const { data: repository } = await api.get(
@@ -31,6 +34,8 @@ export default class Main extends Component {
             });
         } catch (err) {
             this.setState({ repositoryError: true });
+        } finally {
+            this.setState({ loading: false });
         }
     };
 
@@ -51,7 +56,18 @@ export default class Main extends Component {
                             this.setState({ repositoryInput: e.target.value })
                         }
                     />
-                    <button type="submit">Okay!</button>
+                    <button
+                        type="submit"
+                        disabled={
+                            !this.state.repositoryInput || this.state.loading
+                        }
+                    >
+                        {this.state.loading ? (
+                            <i className="fa fa-spinner fa-pulse" />
+                        ) : (
+                            "Okay!"
+                        )}
+                    </button>
                 </Form>
 
                 <CompareList repositories={this.state.repositories} />
