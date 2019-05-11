@@ -35,6 +35,7 @@ export const Form = styled.form`
         font-weight: bold;
         border-radius: 3px;
         cursor: pointer;
+        transition: 0.9s;
     }
 
     button[disabled] {

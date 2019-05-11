@@ -105,7 +105,7 @@ export default class Main extends Component {
                         {this.state.loading ? (
                             <i className="fa fa-spinner fa-pulse" />
                         ) : (
-                            "Okay!"
+                            "OK"
                         )}
                     </button>
                 </Form>
